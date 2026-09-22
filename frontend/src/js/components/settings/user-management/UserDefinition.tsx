@@ -158,6 +158,8 @@ export const UserDefinition = ({ currentUser, hasMultitenancy, isEnterprise, onC
       .then(() => dispatch(setSnackbar(`A password reset email was sent to ${email}.`)));
 
   const onSubmitClick = () => {
+    // users are updated through a PUT, so the payload has to carry the user's current email
+    // along with the roles, unchanged as it is - see ME-762
     onSubmit({ ...selectedUser, roles: selectedRoles }, 'edit', id);
     setIsEditingRoles(false);
   };

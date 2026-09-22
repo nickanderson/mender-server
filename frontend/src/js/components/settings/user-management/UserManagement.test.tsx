@@ -123,5 +123,13 @@ describe('UserManagement Component', () => {
     expect(screen.getByText(/the selected role may prevent/i)).toBeInTheDocument();
     await user.type(listbox, '{Escape}');
     expect(screen.getByRole('button', { name: /Save/i })).not.toBeDisabled();
+
+    const { editUser: editUserSpy } = StoreThunks;
+    vi.mocked(editUserSpy).mockClear();
+    await user.click(screen.getByRole('button', { name: /Save/i }));
+    await waitFor(() => expect(editUserSpy).toHaveBeenCalled());
+    // the update endpoint is a PUT, so the unchanged email has to travel with the roles
+    const [{ email: submittedEmail, id: submittedId }] = vi.mocked(editUserSpy).mock.calls[0];
+    expect(submittedEmail).toEqual(defaultState.users.byId[submittedId].email);
   });
 });
